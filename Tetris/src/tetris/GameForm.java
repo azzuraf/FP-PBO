@@ -1,9 +1,20 @@
 package tetris;
 
 public class GameForm extends javax.swing.JFrame {
+    public GameArea ga;
+    
     public GameForm() {
         initComponents();
-        this.add (new GameArea(gameAreaPlaceholder, 10));
+        
+        ga = new GameArea(gameAreaPlaceholder, 10);
+        this.add(ga);
+        
+        startGame();
+    }
+    
+    public void startGame()
+    {
+        new GameThread(ga).start();
     }
 
     @SuppressWarnings("unchecked")
@@ -16,7 +27,7 @@ public class GameForm extends javax.swing.JFrame {
         setResizable(false);
 
         gameAreaPlaceholder.setBackground(new java.awt.Color(238, 238, 238));
-        gameAreaPlaceholder.setBorder(javax.swing.BorderFactory.createLineBorder(null));
+        gameAreaPlaceholder.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
         javax.swing.GroupLayout gameAreaPlaceholderLayout = new javax.swing.GroupLayout(gameAreaPlaceholder);
         gameAreaPlaceholder.setLayout(gameAreaPlaceholderLayout);
@@ -75,6 +86,7 @@ public class GameForm extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
+        //different thread
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new GameForm().setVisible(true);
