@@ -1,5 +1,11 @@
 package tetris;
 
+import java.awt.event.ActionEvent;
+import javax.swing.AbstractAction;
+import javax.swing.ActionMap;
+import javax.swing.InputMap;
+import javax.swing.KeyStroke;
+
 public class GameForm extends javax.swing.JFrame {
     public GameArea ga;
     
@@ -9,12 +15,63 @@ public class GameForm extends javax.swing.JFrame {
         ga = new GameArea(gameAreaPlaceholder, 10);
         this.add(ga);
         
+        initControls();
+        
         startGame();
+    }
+    
+    private void initControls() {
+        InputMap im = this.getRootPane().getInputMap();
+        ActionMap am = this.getRootPane().getActionMap();
+        
+        im.put(KeyStroke.getKeyStroke("RIGHT"), "right");
+        im.put(KeyStroke.getKeyStroke("LEFT"), "left");
+        im.put(KeyStroke.getKeyStroke("UP"), "up");
+        im.put(KeyStroke.getKeyStroke("DOWN"), "down");
+        
+        am.put("right", new AbstractAction(){    
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ga.moveBlockRight();
+            }    
+        });
+        
+        am.put("left", new AbstractAction(){    
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ga.moveBlockLeft();
+            }    
+        });
+        
+        am.put("up", new AbstractAction(){    
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ga.rotateBlock();
+            }    
+        });
+        
+        am.put("down", new AbstractAction(){    
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ga.dropBlock();
+            }    
+        });
     }
     
     public void startGame()
     {
-        new GameThread(ga).start();
+        new GameThread(ga, this).start();
+        //this = pass gameform
+    }
+    
+    public void updateScore(int score)
+    {
+        scoreDisplay.setText("Score : " + score);
+    }
+    
+    public void updateLevel(int level)
+    {
+        levelDisplay.setText("Level : " + level);
     }
 
     @SuppressWarnings("unchecked")
@@ -22,6 +79,8 @@ public class GameForm extends javax.swing.JFrame {
     private void initComponents() {
 
         gameAreaPlaceholder = new javax.swing.JPanel();
+        scoreDisplay = new javax.swing.JLabel();
+        levelDisplay = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
@@ -40,6 +99,12 @@ public class GameForm extends javax.swing.JFrame {
             .addGap(0, 298, Short.MAX_VALUE)
         );
 
+        scoreDisplay.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        scoreDisplay.setText("Score : 0");
+
+        levelDisplay.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        levelDisplay.setText("Level : 1");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -47,13 +112,24 @@ public class GameForm extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(150, 150, 150)
                 .addComponent(gameAreaPlaceholder, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(150, 150, 150))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 49, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(levelDisplay, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(scoreDisplay, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(gameAreaPlaceholder, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(gameAreaPlaceholder, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(36, 36, 36)
+                        .addComponent(scoreDisplay)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(levelDisplay)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -96,5 +172,7 @@ public class GameForm extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel gameAreaPlaceholder;
+    private javax.swing.JLabel levelDisplay;
+    private javax.swing.JLabel scoreDisplay;
     // End of variables declaration//GEN-END:variables
 }
