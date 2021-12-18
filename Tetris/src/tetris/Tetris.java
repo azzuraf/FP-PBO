@@ -7,6 +7,7 @@ public class Tetris
     private static GameForm gf;
     private static StartupForm sf;
     private static LeaderboardForm lf;
+    private static AboutForm af;
     
     public static void start()
     {
@@ -24,6 +25,11 @@ public class Tetris
         sf.setVisible(true);
     }
     
+    public static void showAbout()
+    {
+        af.setVisible(true);
+    }
+    
     public static void gameOver(int score)
     {
         String playerName = JOptionPane.showInputDialog("Game Over!\nPlease enter your name:");
@@ -38,11 +44,12 @@ public class Tetris
                 gf = new GameForm();
                 sf = new StartupForm();
                 lf = new LeaderboardForm();
+                af = new AboutForm();
 
                 sf.setVisible(true);
             }
         });
         
        
-    }    
+    } 
 }
