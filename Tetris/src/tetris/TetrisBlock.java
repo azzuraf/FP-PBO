@@ -1,6 +1,7 @@
 package tetris;
 
 import java.awt.Color;
+import java.util.Random;
 
 /**
  *
@@ -14,11 +15,12 @@ public class TetrisBlock
     private int[][][] shapes;
     private int currentRotation;
     
+    private Color[] availableColors = {Color.green, Color.red, Color. blue, Color.magenta};
+    
     //constructor
-    public TetrisBlock(int[][] shape, Color color)
+    public TetrisBlock(int[][] shape)
     {
         this.shape = shape;
-        this.color = color;
         
         initShapes();
     }
@@ -44,11 +46,16 @@ public class TetrisBlock
     
     public void spawn(int gridWidth)
     {
-        currentRotation = 0;
+        Random r = new Random();
+        
+        currentRotation = r.nextInt(shapes.length);
         shape = shapes[currentRotation];
         
-        y = 0-getHeight();
-        x = (gridWidth - getWidth())/2;
+        y = -getHeight();
+        x = r.nextInt(gridWidth - getWidth());
+        
+        color = availableColors[r.nextInt(availableColors.length)];
+        
     }
     
     public int[][] getShape()
@@ -76,9 +83,19 @@ public class TetrisBlock
         return x;
     }
     
+    public void setX(int newX)
+    {
+        x = newX;
+    }
+    
     public int getY()
     {
         return y;
+    }
+    
+    public void setY(int newY)
+    {
+        y = newY;
     }
     
     public void moveDown()

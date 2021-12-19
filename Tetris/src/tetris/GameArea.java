@@ -3,6 +3,8 @@ package tetris;
 import javax.swing.JPanel;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.util.Random;
+import tetrisblocks.*;
         
 public class GameArea extends JPanel {
     private int gridRows;
@@ -12,8 +14,10 @@ public class GameArea extends JPanel {
     
     private TetrisBlock block;
     
+    private TetrisBlock[] blocks;
+    
     public GameArea(JPanel placeholder, int columns) {
-        placeholder.setVisible(false);
+        //placeholder.setVisible(false);
         this.setBounds (placeholder.getBounds());
         this.setBackground (placeholder.getBackground());
         this.setBorder (placeholder.getBorder());
@@ -23,17 +27,49 @@ public class GameArea extends JPanel {
         gridRows = this.getBounds().height / gridCellSize;
         
         background = new Color[gridRows][gridColumns];
+        
+        blocks = new TetrisBlock[]{new IShape(),
+                                   new JShape(),
+                                   new LShape(),
+                                   new OShape(),
+                                   new SShape(),
+                                   new TShape(),
+                                   new ZShape()};
+    }
+    
+    public void initBackgroundArray()
+    {
+        background = new Color[gridRows][gridColumns];
     }
     
     public void spawnBlock()
     {
-        block = new TetrisBlock(new int[][]{{1,0},{1,0},{1,1}}, Color.blue);
+        Random r = new Random();
+        
+        block = blocks [r.nextInt(blocks.length)];
         block.spawn(gridColumns);
     }
     
+    public boolean isBlockOutOfBounds()
+    {
+        //if the top row is not in the game area
+        //then it is out of bound
+        
+        if(block.getY() < 0)
+        {
+            block = null;
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    
     public boolean moveBlockDown() {
-        if(checkBottom() == false) {
-            moveBlockToBackground();
+        
+        if(checkBottom() == false)
+        {
             return false;
         }
         
@@ -44,6 +80,11 @@ public class GameArea extends JPanel {
     }
     
     public void moveBlockRight() {
+        
+        if(block == null)
+        {
+            return;
+        }
         if(checkRight() == false)
             return;
         
@@ -52,6 +93,11 @@ public class GameArea extends JPanel {
     }
     
     public void moveBlockLeft() {
+        
+        if(block == null)
+        {
+            return;
+        }
         if(checkLeft() == false)
             return;
         
@@ -60,6 +106,11 @@ public class GameArea extends JPanel {
     }
     
     public void dropBlock() {
+        
+        if(block == null)
+        {
+            return;
+        }
         while (checkBottom()) {
             block.moveDown();
         }
@@ -68,7 +119,15 @@ public class GameArea extends JPanel {
     }
     
     public void rotateBlock() {
+        
+        if(block == null) return;
         block.rotate();
+        
+        if(block.getLeftEdge() < 0) block.setX(0);
+        if(block.getRightEdge()>= gridColumns) block.setX(gridColumns - block.getWidth());
+        if(block.getBottomEdge() >= gridRows) block.setY(gridRows- block.getHeight());
+        
+        
         repaint();
     }
     
@@ -146,7 +205,66 @@ public class GameArea extends JPanel {
         return true;
     }
     
-    private void moveBlockToBackground() {
+    public int clearLines()
+    {
+        boolean lineFilled;
+        int linesCleared = 0;
+        
+        //find completed lines
+        for(int r = gridRows - 1; r >= 0; r--)
+        {
+            lineFilled = true;
+            
+            //to check whether line is filled or not
+            for(int c = 0; c < gridColumns; c++)
+            {
+                //line is not completed
+                //and must be ignored
+                if(background[r][c] ==  null)
+                {
+                    lineFilled = false;
+                    break;
+                }
+            }
+            
+            //if line is filled then block will be cleared
+            if(lineFilled == true)
+            {
+                linesCleared++;
+                clearLine(r);
+                shiftDown(r);
+                clearLine(0); //clear top line
+                
+                r++;//when there is two lines that's filled
+                //so it doesn't get skipped
+                
+                repaint();
+            }
+        }
+        return linesCleared;
+    }
+    
+    private void clearLine(int r)
+    {
+        for(int i = 0; i < gridColumns; i++)
+        {
+            background[r][i]=null;
+        }
+    }
+    
+    private void shiftDown(int r)
+    {
+        for(int row = r; row > 0; row--)
+        {
+            for(int col = 0; col < gridColumns; col++)
+            {
+                //replace current line with line above it
+                background[row][col] = background[row-1][col];
+            }
+        }
+    }
+    
+    public void moveBlockToBackground() {
         int[][] shape = block.getShape();
         int h = block.getHeight();
         int w = block.getWidth();
