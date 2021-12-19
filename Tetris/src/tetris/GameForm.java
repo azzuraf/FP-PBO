@@ -69,12 +69,12 @@ public class GameForm extends javax.swing.JFrame {
     
     public void updateScore(int score)
     {
-        scoreDisplay.setText("Score : " + score);
+        scoreDisplay.setText("SCORE: " + score);
     }
     
     public void updateLevel(int level)
     {
-        levelDisplay.setText("Level : " + level);
+        levelDisplay.setText("LEVEL: " + level);
     }
 
     @SuppressWarnings("unchecked")
@@ -110,7 +110,8 @@ public class GameForm extends javax.swing.JFrame {
 
         scoreDisplay.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
         scoreDisplay.setForeground(new java.awt.Color(240, 240, 240));
-        scoreDisplay.setText("SCORE : 0");
+        scoreDisplay.setText("SCORE: 0");
+        scoreDisplay.setToolTipText("");
 
         levelDisplay.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
         levelDisplay.setForeground(new java.awt.Color(240, 240, 240));
@@ -168,6 +169,9 @@ public class GameForm extends javax.swing.JFrame {
                         .addComponent(jLabel1)))
                 .addContainerGap(28, Short.MAX_VALUE))
         );
+
+        scoreDisplay.getAccessibleContext().setAccessibleParent(this);
+        levelDisplay.getAccessibleContext().setAccessibleParent(this);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
